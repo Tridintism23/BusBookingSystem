@@ -17,9 +17,28 @@ namespace BusBookingSystem
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(DataService dataService)
+        private Window busWindow = new BusWindow();
+        private Window customerWindow = new CustomerWindow();
+        private Window bookingWindow = new Window();
+
+        public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void ButtonBus(object sender, RoutedEventArgs e)
+        {
+            busWindow.ShowDialog();
+        }
+
+        private void ButtonCustomer(object sender, RoutedEventArgs e)
+        {
+            customerWindow.ShowDialog();
+        }
+
+        private void ButtonBooking(object sender, RoutedEventArgs e)
+        {
+            bookingWindow.ShowDialog();
         }
     }
 }
