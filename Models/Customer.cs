@@ -5,15 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BusBookingSystem.Models
-{ 
+{
     public class Customer
     {
-        public string CustomerId { get; set; } = Guid.NewGuid().ToString().Substring(0, 8);
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string FullName { get; set; } = string.Empty;
-        public string Phone { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-
+        public string ccode { get; set; }
+        public string name { get; set; }
+        public string phone { get; set; }
     }
 }
