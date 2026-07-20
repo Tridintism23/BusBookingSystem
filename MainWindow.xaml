@@ -7,6 +7,10 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+            <Button Padding="10" Click="ButtonBus">Bus management</Button>
+            <Button Padding="10" Click="ButtonCustomer">Customer management</Button>
+            <Button Padding="10" Click="ButtonBooking">Booking management</Button>
+        </StackPanel>
     </Grid>
 </Window>
