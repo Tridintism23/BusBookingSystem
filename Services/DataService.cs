@@ -12,6 +12,12 @@ namespace BusBookingSystem.Services
 {
     public class DataService
     {
+        private const string BusesFile = "buses.json";
+        private const string BookingsFile = "bookings.json";
+
+        public List<Bus> Buses { get; set; } = new();
+        public List<Booking> Bookings { get; set; } = new();
+
         public static List<T> LoadFromFile<T>()
         {
             try
