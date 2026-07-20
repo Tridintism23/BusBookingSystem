@@ -24,7 +24,6 @@ namespace BusBookingSystem.Services
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
-                openFileDialog.Filter = title;
                 openFileDialog.Filter = "JSON (*.json)|*.json";
                 if (openFileDialog.ShowDialog() == true)
                 {
