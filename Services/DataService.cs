@@ -18,7 +18,7 @@ namespace BusBookingSystem.Services
         public List<Bus> Buses { get; set; } = new();
         public List<Booking> Bookings { get; set; } = new();
 
-        public static List<T> LoadFromFile<T>(string title = "Select File")
+        public static List<T> LoadFromFile<T>()
         {
             try
             {
