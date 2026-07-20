@@ -11,11 +11,11 @@ namespace BusBookingSystem.Services
 {
     public class DataService
     {
-        private const string AccountsFile = "accounts.json";
+        private const string CustomersFile = "customers.json";
         private const string BusesFile = "buses.json";
         private const string BookingsFile = "bookings.json";
 
-        public List<Account> Accounts { get; set; } = new();
+        public List<Customer> Customers { get; set; } = new();
         public List<Bus> Buses { get; set; } = new();
         public List<Booking> Bookings { get; set; } = new();
 
@@ -41,23 +41,23 @@ namespace BusBookingSystem.Services
 
         public void LoadAllData()
         {
-            Accounts = LoadFromFile<Account>(AccountsFile);
+            Customers = LoadFromFile<Customer>(CustomersFile);
             Buses = LoadFromFile<Bus>(BusesFile);
             Bookings = LoadFromFile<Booking>(BookingsFile);
         }
 
-        public void SaveAccounts() => SaveToFile(AccountsFile, Accounts);
+        public void SaveCustomers() => SaveToFile(CustomersFile, Customers);
         public void SaveBuses() => SaveToFile(BusesFile, Buses);
         public void SaveBookings() => SaveToFile(BookingsFile, Bookings);
     
         public DataService()
         {
             LoadAllData();
-            if (Accounts.Count == 0)
+            if (Customers.Count == 0)
             {
-                Accounts.Add(new Account { Username = "admin", Password = "123", FullName = "System Admin", Role = UserRole.Admin });
-                Accounts.Add(new Account { Username = "customer", Password = "123", FullName = "Nguyen Van A", Phone = "0987654321", Email = "a@gmail.com", Role = UserRole.Customer });
-                SaveAccounts();
+                Customers.Add(new Customer { Username = "admin", Password = "123", FullName = "System Admin"});
+                Customers.Add(new Customer { Username = "customer", Password = "123", FullName = "Nguyen Van A", Phone = "0987654321", Email = "a@gmail.com"});
+                SaveCustomers();
             }
 
             if (Buses.Count == 0)
