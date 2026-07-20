@@ -1,0 +1,55 @@
+﻿<Window x:Class="BusBookingSystem.CustomerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:BusBookingSystem"
+        mc:Ignorable="d"
+        Title="CustomerWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <DataGrid Name="CustomerDG" Grid.Column="0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Customer ID" Binding="{Binding Source=ccode}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Customer name" Binding="{Binding Source=name}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Customer phone" Binding="{Binding Source=phone}"></DataGridTextColumn>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Tag="{Binding Source=ccode}" Click="Button_Delete">Delete</Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Orientation="Vertical" Grid.Column="1">
+            <StackPanel Orientation="Horizontal">
+                <Label>Name search:</Label>
+                <TextBox Name="SearchTB" MinWidth="100" VerticalContentAlignment="Center"/>
+                <Button Click="Button_Search" Padding="10,0">Search</Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0, 10, 0, 0">
+                <Label>Customer code</Label>
+                <TextBox Name="CCodeTB" MinWidth="100" VerticalContentAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>Customer name</Label>
+                <TextBox Name="NameTB" MinWidth="100" VerticalContentAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>Phone</Label>
+                <TextBox Name="PhoneTB" MinWidth="100" VerticalContentAlignment="Center"/>
+            </StackPanel>
+            <StackPanel>
+                <Button Click="Button_Add_Customer">Add new customer</Button>
+            </StackPanel>
+
+            <Button Click="ImportFromFile" Margin="0, 10, 0, 0">Read from file</Button>
+            <Button Click="ExportToFile" Margin="0, 10, 0, 0">Write to file</Button>
+
+        </StackPanel>
+    </Grid>
+</Window>

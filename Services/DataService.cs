@@ -19,21 +19,13 @@ namespace BusBookingSystem.Services
         public List<Bus> Buses { get; set; } = new();
         public List<Booking> Bookings { get; set; } = new();
 
-        private List<T> LoadFromFile<T>(string fileName)
+        public static List<T> LoadFromFile<T>(string fileName)
         {
-            if (!File.Exists(fileName)) return new List<T>();
-            try
-            {
-                string json = File.ReadAllText(fileName);
-                return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
-            }
-            catch 
-            {
-                return new List<T>();
-            }
+            string json = File.ReadAllText(fileName);
+            return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
         }
 
-        private void SaveToFile<T>(string fileName, List<T> data)
+        public static void SaveToFile<T>(string fileName, List<T> data)
         {
             string json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(fileName, json);
