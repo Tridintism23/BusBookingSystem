@@ -22,11 +22,34 @@ namespace BusBookingSystem
     public partial class BookingWindow : Window
     {
         List<Booking> bookingList = new List<Booking>();
+        List<Customer> customerList = new List<Customer>();
+        List<Bus> busList = new List<Bus>();
 
         public BookingWindow()
         {
             InitializeComponent();
+            LoadDropdownData();
             RefreshList();
+        }
+
+        // Nạp dữ liệu cho 2 ComboBox Khách hàng và Chuyến xe
+        private void LoadDropdownData()
+        {
+            customerList = DataService.LoadFromFile<Customer>("Chọn file danh sách Khách hàng (Customers)");
+            busList = DataService.LoadFromFile<Bus>("Chọn file danh sách Chuyến xe (Buses)");
+
+            // Tạo thuộc tính hiển thị đẹp mắt cho ComboBox
+            cbCustomers.ItemsSource = customerList.Select(c => new
+            {
+                ccode = c.ccode,
+                DisplayInfo = $"{c.ccode} - {c.name}"
+            }).ToList();
+
+            cbBuses.ItemsSource = busList.Select(b => new
+            {
+                BusId = b.BusId,
+                DisplayInfo = $"{b.BusId} ({b.Departure} -> {b.Destination})"
+            }).ToList();
         }
 
         private void RefreshList()
@@ -56,19 +79,25 @@ namespace BusBookingSystem
 
         private void btnAddBooking_Click(object sender, RoutedEventArgs e)
         {
+            if (cbCustomers.SelectedValue == null || cbBuses.SelectedValue == null)
+            {
+                MessageBox.Show("Vui lòng chọn Khách hàng và Chuyến xe!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             int.TryParse(txtSeatsBooked.Text, out int seats);
             double.TryParse(txtTotalAmount.Text, out double totalAmount);
 
             Booking booking = new Booking();
 
-            // Nếu người dùng nhập BookingId thì lấy, không thì dùng Guid tự sinh
             if (!string.IsNullOrWhiteSpace(txtBookingId.Text))
             {
                 booking.BookingId = txtBookingId.Text.Trim();
             }
 
-            booking.Ccode = txtCcode.Text.Trim();
-            booking.BusId = txtBusId.Text.Trim();
+            // Lấy giá trị mã ccode và BusId được chọn từ ComboBox
+            booking.Ccode = cbCustomers.SelectedValue.ToString();
+            booking.BusId = cbBuses.SelectedValue.ToString();
             booking.SeatsBooked = seats;
             booking.TotalAmount = totalAmount;
             booking.BookingDate = DateTime.Now;
@@ -94,6 +123,7 @@ namespace BusBookingSystem
         private void btnReadFile_Click(object sender, RoutedEventArgs e)
         {
             bookingList = DataService.LoadFromFile<Booking>();
+            LoadDropdownData(); // Cập nhật lại luôn cả danh sách dropdown
             RefreshList();
         }
 
@@ -102,8 +132,8 @@ namespace BusBookingSystem
             if (dgBookings.SelectedItem is Booking selectedBooking)
             {
                 txtBookingId.Text = selectedBooking.BookingId;
-                txtCcode.Text = selectedBooking.Ccode;
-                txtBusId.Text = selectedBooking.BusId;
+                cbCustomers.SelectedValue = selectedBooking.Ccode;
+                cbBuses.SelectedValue = selectedBooking.BusId;
                 txtSeatsBooked.Text = selectedBooking.SeatsBooked.ToString();
                 txtTotalAmount.Text = selectedBooking.TotalAmount.ToString();
             }

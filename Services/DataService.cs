@@ -18,12 +18,13 @@ namespace BusBookingSystem.Services
         public List<Bus> Buses { get; set; } = new();
         public List<Booking> Bookings { get; set; } = new();
 
-        public static List<T> LoadFromFile<T>()
+        public static List<T> LoadFromFile<T>(string title = "Select File")
         {
             try
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
+                openFileDialog.Filter = title;
                 openFileDialog.Filter = "JSON (*.json)|*.json";
                 if (openFileDialog.ShowDialog() == true)
                 {

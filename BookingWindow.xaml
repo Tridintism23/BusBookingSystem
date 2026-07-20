@@ -46,22 +46,24 @@
                 <TextBox x:Name="txtBookingId" Grid.Column="1"/>
             </Grid>
 
+            <!-- CHỌN KHÁCH HÀNG TỪ COMBOBOX -->
             <Grid Margin="0,0,0,5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="110"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Customer code" VerticalAlignment="Center"/>
-                <TextBox x:Name="txtCcode" Grid.Column="1"/>
+                <TextBlock Text="Customer" VerticalAlignment="Center"/>
+                <ComboBox x:Name="cbCustomers" Grid.Column="1" DisplayMemberPath="DisplayInfo" SelectedValuePath="ccode"/>
             </Grid>
 
+            <!-- CHỌN CHUYẾN XE TỪ COMBOBOX -->
             <Grid Margin="0,0,0,5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="110"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Bus ID" VerticalAlignment="Center"/>
-                <TextBox x:Name="txtBusId" Grid.Column="1"/>
+                <TextBlock Text="Bus / Route" VerticalAlignment="Center"/>
+                <ComboBox x:Name="cbBuses" Grid.Column="1" DisplayMemberPath="DisplayInfo" SelectedValuePath="BusId"/>
             </Grid>
 
             <Grid Margin="0,0,0,5">
