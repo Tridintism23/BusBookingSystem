@@ -36,6 +36,17 @@ public partial class CustomerWindow : Window
         CustomerDG.ItemsSource = searchList;
     }
 
+    public bool Find(string ccode)
+    {
+        foreach (Customer customer in customerList)
+        {
+            if (customer.name.Contains(SearchTB.Text ?? "")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void Button_Add_Customer(object sender, RoutedEventArgs e)
     {
         Customer customer = new Customer();
