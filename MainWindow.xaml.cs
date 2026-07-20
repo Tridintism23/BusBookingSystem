@@ -17,12 +17,15 @@ namespace BusBookingSystem
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Window busWindow = new BusWindow();
-        private Window customerWindow = new CustomerWindow();
-        private Window bookingWindow = new Window();
+        private Window busWindow;
+        private Window customerWindow;
+        private Window bookingWindow;
 
         public MainWindow()
         {
+            busWindow = new BusWindow();
+            customerWindow = new CustomerWindow();
+            bookingWindow = new BookingWindow((BusWindow)busWindow, (CustomerWindow)customerWindow);
             InitializeComponent();
         }
 
@@ -38,6 +41,7 @@ namespace BusBookingSystem
 
         private void ButtonBooking(object sender, RoutedEventArgs e)
         {
+            ((BookingWindow)bookingWindow).RefreshWindow();
             bookingWindow.ShowDialog();
         }
     }

@@ -1,5 +1,8 @@
-﻿using System;
+﻿using BusBookingSystem.Models;
+using BusBookingSystem.Services;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using BusBookingSystem.Models;
-using BusBookingSystem.Services;
 
 namespace BusBookingSystem
 {
@@ -22,21 +23,28 @@ namespace BusBookingSystem
     public partial class BookingWindow : Window
     {
         List<Booking> bookingList = new List<Booking>();
-        List<Customer> customerList = new List<Customer>();
-        List<Bus> busList = new List<Bus>();
+        BusWindow busWindow;
+        CustomerWindow customerWindow;
 
-        public BookingWindow()
+        public BookingWindow(BusWindow busWindow, CustomerWindow customerWindow)
         {
+            this.busWindow = busWindow;
+            this.customerWindow = customerWindow;
             InitializeComponent();
+        }
+
+        public void RefreshWindow()
+        {
             LoadDropdownData();
             RefreshList();
+
         }
 
         // Nạp dữ liệu cho 2 ComboBox Khách hàng và Chuyến xe
         private void LoadDropdownData()
         {
-            customerList = DataService.LoadFromFile<Customer>("Chọn file danh sách Khách hàng (Customers)");
-            busList = DataService.LoadFromFile<Bus>("Chọn file danh sách Chuyến xe (Buses)");
+            List<Customer> customerList = customerWindow.customerList;
+            List<Bus> busList = busWindow.busList;
 
             // Tạo thuộc tính hiển thị đẹp mắt cho ComboBox
             cbCustomers.ItemsSource = customerList.Select(c => new
@@ -137,6 +145,12 @@ namespace BusBookingSystem
                 txtSeatsBooked.Text = selectedBooking.SeatsBooked.ToString();
                 txtTotalAmount.Text = selectedBooking.TotalAmount.ToString();
             }
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            this.Visibility = Visibility.Hidden;
+            e.Cancel = true;
         }
     }
 }

@@ -1,0 +1,22 @@
+[
+  {
+    "BusId": "B01",
+    "BusNumber": "Bus1",
+    "Departure": "sig",
+    "Destination": "ma",
+    "DepartureTime": "10",
+    "TotalSeats": 40,
+    "AvailableSeats": 40,
+    "TicketPrice": 150000
+  },
+  {
+    "BusId": "B02",
+    "BusNumber": "Bus2",
+    "Departure": "sig",
+    "Destination": "ma",
+    "DepartureTime": "10",
+    "TotalSeats": 40,
+    "AvailableSeats": 40,
+    "TicketPrice": 150000
+  }
+]

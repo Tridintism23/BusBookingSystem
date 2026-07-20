@@ -1,5 +1,8 @@
-﻿using System;
+﻿using BusBookingSystem.Models;
+using BusBookingSystem.Services;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using BusBookingSystem.Models;
-using BusBookingSystem.Services;
 
 namespace BusBookingSystem
 {
@@ -21,7 +22,7 @@ namespace BusBookingSystem
     /// </summary>
     public partial class BusWindow : Window
     {
-        List<Bus> busList = new List<Bus>();
+        public List<Bus> busList { private set; get; } = new List<Bus>();
 
         public BusWindow()
         {
@@ -106,6 +107,12 @@ namespace BusBookingSystem
                 txtAvailableSeats.Text = selectedBus.AvailableSeats.ToString();
                 txtTicketPrice.Text = selectedBus.TicketPrice.ToString();
             }
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            this.Visibility = Visibility.Hidden;
+            e.Cancel = true;
         }
     }
 }

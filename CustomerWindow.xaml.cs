@@ -10,7 +10,7 @@ namespace BusBookingSystem;
 
 public partial class CustomerWindow : Window
 {
-    List<Customer> customerList = new List<Customer>();
+    public List<Customer> customerList { private set; get; }  = new List<Customer>();
 
     public CustomerWindow()
     {
@@ -35,18 +35,6 @@ public partial class CustomerWindow : Window
         }
         CustomerDG.ItemsSource = searchList;
     }
-
-    public bool Find(string ccode)
-    {
-        foreach (Customer customer in customerList)
-        {
-            if (customer.name.Contains(SearchTB.Text ?? "")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void Button_Add_Customer(object sender, RoutedEventArgs e)
     {
         Customer customer = new Customer();
@@ -81,5 +69,11 @@ public partial class CustomerWindow : Window
     {
         customerList = DataService.LoadFromFile<Customer>();
         RefreshList();
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        this.Visibility = Visibility.Hidden;
+        e.Cancel = true;
     }
 }
