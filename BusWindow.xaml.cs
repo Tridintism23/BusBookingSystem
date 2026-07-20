@@ -22,7 +22,7 @@ namespace BusBookingSystem
     /// </summary>
     public partial class BusWindow : Window
     {
-        public List<Bus> busList { private set; get; } = new List<Bus>();
+        public List<Bus> busList { set; get; } = new List<Bus>();
 
         public BusWindow()
         {

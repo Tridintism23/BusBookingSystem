@@ -10,7 +10,7 @@ namespace BusBookingSystem;
 
 public partial class CustomerWindow : Window
 {
-    public List<Customer> customerList { private set; get; }  = new List<Customer>();
+    public List<Customer> customerList { set; get; }  = new List<Customer>();
 
     public CustomerWindow()
     {

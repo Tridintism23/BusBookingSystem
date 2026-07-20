@@ -14,6 +14,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.IO;
+using System.Text.Json;
 
 namespace BusBookingSystem
 {
@@ -25,6 +27,7 @@ namespace BusBookingSystem
         List<Booking> bookingList = new List<Booking>();
         BusWindow busWindow;
         CustomerWindow customerWindow;
+        private List<Bus> currentBusList = new List<Bus>();
 
         public BookingWindow(BusWindow busWindow, CustomerWindow customerWindow)
         {
@@ -43,10 +46,32 @@ namespace BusBookingSystem
         // Nạp dữ liệu cho 2 ComboBox Khách hàng và Chuyến xe
         private void LoadDropdownData()
         {
-            List<Customer> customerList = customerWindow.customerList;
-            List<Bus> busList = busWindow.busList;
+            List<Customer> customerList = customerWindow?.customerList ?? new List<Customer>();
+            List<Bus> busList = busWindow?.busList ?? new List<Bus>();
+            
 
-            // Tạo thuộc tính hiển thị đẹp mắt cho ComboBox
+            if (customerList.Count == 0 && System.IO.File.Exists("customers.json"))
+            {
+                string json = File.ReadAllText("customers.json");
+                var loadedCustomers = JsonSerializer.Deserialize<List<Customer>>(json);
+                if (loadedCustomers != null && loadedCustomers.Count > 0)
+                {
+                    customerList = loadedCustomers;
+                    if (customerWindow != null) customerWindow.customerList = customerList;
+                }
+            }
+
+            if (busList.Count == 0 && System.IO.File.Exists("buses.json"))
+            {
+                string json = File.ReadAllText("buses.json");
+                var loadedBuses = JsonSerializer.Deserialize<List<Bus>>(json);
+                if (loadedBuses != null && loadedBuses.Count > 0)
+                {
+                    busList = loadedBuses;
+                    if (busWindow != null) busWindow.busList = busList;
+                }
+            }
+
             cbCustomers.ItemsSource = customerList.Select(c => new
             {
                 ccode = c.ccode,
@@ -58,6 +83,8 @@ namespace BusBookingSystem
                 BusId = b.BusId,
                 DisplayInfo = $"{b.BusId} ({b.Departure} -> {b.Destination})"
             }).ToList();
+
+            currentBusList = busList;
         }
 
         private void RefreshList()
@@ -87,31 +114,89 @@ namespace BusBookingSystem
 
         private void btnAddBooking_Click(object sender, RoutedEventArgs e)
         {
-            if (cbCustomers.SelectedValue == null || cbBuses.SelectedValue == null)
+            if (cbCustomers.SelectedValue == null)
             {
-                MessageBox.Show("Vui lòng chọn Khách hàng và Chuyến xe!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Vui lòng chọn Khách hàng!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            int.TryParse(txtSeatsBooked.Text, out int seats);
-            double.TryParse(txtTotalAmount.Text, out double totalAmount);
-
-            Booking booking = new Booking();
-
-            if (!string.IsNullOrWhiteSpace(txtBookingId.Text))
+            if (cbBuses.SelectedValue == null)
             {
-                booking.BookingId = txtBookingId.Text.Trim();
+                MessageBox.Show("Vui lòng chọn Chuyến xe!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
 
-            // Lấy giá trị mã ccode và BusId được chọn từ ComboBox
-            booking.Ccode = cbCustomers.SelectedValue.ToString();
-            booking.BusId = cbBuses.SelectedValue.ToString();
-            booking.SeatsBooked = seats;
-            booking.TotalAmount = totalAmount;
-            booking.BookingDate = DateTime.Now;
+            string bookingId = txtBookingId.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(bookingId))
+            {
+                MessageBox.Show("Vui lòng nhập Booking ID!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (bookingList.Any(b => b.BookingId.Equals(bookingId, StringComparison.OrdinalIgnoreCase)))
+            {
+                MessageBox.Show($"Mã đặt vé (Booking ID) '{bookingId}' đã tồn tại! Vui lòng nhập mã khác.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!int.TryParse(txtSeatsBooked.Text, out int seats) || seats <= 0)
+            {
+                MessageBox.Show("Số lượng ghế đặt phải là một số nguyên dương lớn hơn 0!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string selectedBusId = cbBuses.SelectedValue.ToString();
+            Bus selectedBus = currentBusList.FirstOrDefault(b => b.BusId == selectedBusId);
+
+            if (selectedBus == null)
+            {
+                MessageBox.Show("Không tìm thấy thông tin chuyến xe đã chọn trong hệ thống!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (seats > selectedBus.AvailableSeats)
+            {
+                MessageBox.Show($"Chuyến xe này chỉ còn {selectedBus.AvailableSeats} ghế trống! Bạn không thể đặt {seats} ghế.",
+                                "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            double calculatedTotalAmount = seats * selectedBus.TicketPrice;
+
+            Booking booking = new Booking
+            {
+                BookingId = bookingId,
+                Ccode = cbCustomers.SelectedValue.ToString(),
+                BusId = selectedBusId,
+                SeatsBooked = seats,
+                TotalAmount = calculatedTotalAmount,
+                BookingDate = DateTime.Now
+            };
+
+            selectedBus.AvailableSeats -= seats;
 
             bookingList.Add(booking);
             RefreshList();
+
+            cbBuses.ItemsSource = currentBusList.Select(b => new
+            {
+                BusId = b.BusId,
+                DisplayInfo = $"{b.BusId} ({b.Departure} -> {b.Destination}) - {b.TicketPrice:N0} VNĐ (Còn: {b.AvailableSeats} ghế)"
+            }).ToList();
+
+            ClearFormInputs();
+
+            MessageBox.Show("Đặt vé thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void ClearFormInputs()
+        {
+            txtBookingId.Clear();
+            cbCustomers.SelectedIndex = -1;
+            cbBuses.SelectedIndex = -1;
+            txtSeatsBooked.Text = "1";
+            txtTotalAmount.Text = "";
         }
 
         private void btnDeleteBooking_Click(object sender, RoutedEventArgs e)
@@ -131,7 +216,7 @@ namespace BusBookingSystem
         private void btnReadFile_Click(object sender, RoutedEventArgs e)
         {
             bookingList = DataService.LoadFromFile<Booking>();
-            LoadDropdownData(); // Cập nhật lại luôn cả danh sách dropdown
+            LoadDropdownData();
             RefreshList();
         }
 
